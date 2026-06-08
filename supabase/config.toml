@@ -1,0 +1,5 @@
+# Supabase local development config
+# Link to remote: supabase link --project-ref thzwbzejlzzcfgvdgeiz
+
+[project]
+id = "thzwbzejlzzcfgvdgeiz"
