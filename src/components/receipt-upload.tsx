@@ -12,7 +12,8 @@ interface ReceiptUploadProps {
 }
 
 export function ReceiptUpload({ onFileReady, disabled }: ReceiptUploadProps) {
-  const inputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
   const [compressing, setCompressing] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
   const [error, setError] = useState("");
@@ -43,17 +44,26 @@ export function ReceiptUpload({ onFileReady, disabled }: ReceiptUploadProps) {
     if (preview) URL.revokeObjectURL(preview);
     setPreview(null);
     onFileReady(null, null);
-    if (inputRef.current) inputRef.current.value = "";
+    if (cameraInputRef.current) cameraInputRef.current.value = "";
+    if (galleryInputRef.current) galleryInputRef.current.value = "";
   }
 
   return (
     <div className="space-y-3">
       <Label>Receipt photo (optional)</Label>
       <input
-        ref={inputRef}
+        ref={cameraInputRef}
         type="file"
         accept="image/*"
         capture="environment"
+        className="hidden"
+        disabled={disabled || compressing}
+        onChange={(e) => handleFile(e.target.files?.[0] ?? null)}
+      />
+      <input
+        ref={galleryInputRef}
+        type="file"
+        accept="image/*"
         className="hidden"
         disabled={disabled || compressing}
         onChange={(e) => handleFile(e.target.files?.[0] ?? null)}
@@ -64,14 +74,20 @@ export function ReceiptUpload({ onFileReady, disabled }: ReceiptUploadProps) {
           variant="outline"
           className="flex-1"
           disabled={disabled || compressing}
-          onClick={() => inputRef.current?.click()}
+          onClick={() => cameraInputRef.current?.click()}
         >
-          {compressing ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <Camera className="h-4 w-4" />
-          )}
-          {compressing ? "Compressing…" : "Camera / Gallery"}
+          {compressing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
+          {compressing ? "Compressing…" : "Camera"}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          className="flex-1"
+          disabled={disabled || compressing}
+          onClick={() => galleryInputRef.current?.click()}
+        >
+          {compressing ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}
+          {compressing ? "Compressing…" : "Gallery"}
         </Button>
         {preview && (
           <Button type="button" variant="secondary" onClick={clear}>
