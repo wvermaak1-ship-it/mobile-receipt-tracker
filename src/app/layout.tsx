@@ -4,6 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Trip Expense Ledger",
   description: "Track trip expenses and receipts for your team",
+  icons: { icon: "/icon.svg" },
 };
 
 export const viewport: Viewport = {

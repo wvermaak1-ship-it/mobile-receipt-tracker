@@ -1,9 +1,23 @@
 /**
  * One-time admin seed script.
- * Run: npx tsx scripts/seed-admin.ts
- * Requires SUPABASE_SERVICE_ROLE_KEY and ADMIN_INITIAL_PASSWORD in env.
+ * Run: npm run seed:admin
+ * Requires SUPABASE_SERVICE_ROLE_KEY and ADMIN_INITIAL_PASSWORD in .env.local
  */
+import { readFileSync, existsSync } from "fs";
+import { resolve } from "path";
 import { createClient } from "@supabase/supabase-js";
+
+const envPath = resolve(process.cwd(), ".env.local");
+if (existsSync(envPath)) {
+  readFileSync(envPath, "utf8")
+    .split("\n")
+    .forEach((line) => {
+      const match = line.match(/^\s*([^#=]+)=(.*)$/);
+      if (match && !process.env[match[1].trim()]) {
+        process.env[match[1].trim()] = match[2].trim();
+      }
+    });
+}
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
