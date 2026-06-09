@@ -2,6 +2,9 @@ import { createClient } from "@/lib/supabase/client";
 import { receiptStoragePath } from "@/lib/compress-receipt";
 import type { ExpenseFormData } from "@/types/database";
 
+/** Satisfies receipt_or_reason until the receipt file is uploaded. */
+const PENDING_RECEIPT_REASON = "Receipt upload pending";
+
 export async function saveExpense(
   userId: string,
   purchaserName: string,
@@ -17,7 +20,7 @@ export async function saveExpense(
     amount: data.amount,
     currency: "OMR",
     receipt_path: null as string | null,
-    no_receipt_reason: hasReceipt ? null : data.no_receipt_reason,
+    no_receipt_reason: hasReceipt ? PENDING_RECEIPT_REASON : data.no_receipt_reason,
   };
 
   const { data: expense, error: insertError } = await supabase
