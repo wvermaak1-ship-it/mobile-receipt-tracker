@@ -42,7 +42,12 @@ export function AdminLedgerTable({ rows: initialRows }: { rows: LedgerRow[] }) {
               <th className="px-4 py-3 font-medium text-right">Amount (OMR)</th>
               <th className="px-4 py-3 font-medium text-right">Running Total</th>
               <th className="px-4 py-3 font-medium">Receipt</th>
-              <th className="px-4 py-3 font-medium w-16">Actions</th>
+              <th className="px-4 py-3 font-medium">
+                <span className="inline-flex items-center gap-1.5">
+                  <Pencil className="h-3.5 w-3.5 text-slate-600" aria-hidden="true" />
+                  Edit Entry
+                </span>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -73,14 +78,14 @@ export function AdminLedgerTable({ rows: initialRows }: { rows: LedgerRow[] }) {
                   </td>
                   <td className="px-4 py-3">
                     <Button
-                      variant="default"
+                      variant="outline"
                       size="icon"
-                      className="h-8 w-8 min-h-0 bg-teal-600 text-black hover:bg-teal-700 hover:text-black"
+                      className="h-8 w-8 min-h-0 bg-transparent border-slate-300 text-slate-800 hover:bg-slate-50 hover:border-slate-400 hover:text-slate-900"
                       aria-label={`Edit entry #${row.serial_number}`}
                       onMouseEnter={() => setHovered(null)}
                       onClick={() => setEditingRow(row)}
                     >
-                      <Pencil className="h-4 w-4 stroke-black" strokeWidth={2.25} />
+                      <Pencil className="h-4 w-4 text-slate-800" strokeWidth={2.25} />
                     </Button>
                   </td>
                 </tr>
