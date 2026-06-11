@@ -73,14 +73,14 @@ export function AdminLedgerTable({ rows: initialRows }: { rows: LedgerRow[] }) {
                   </td>
                   <td className="px-4 py-3">
                     <Button
-                      variant="outline"
+                      variant="default"
                       size="icon"
-                      className="h-8 w-8 min-h-0 text-teal-700 border-slate-200 bg-white hover:bg-teal-50 hover:text-teal-900 hover:border-teal-300"
+                      className="h-8 w-8 min-h-0 bg-teal-600 text-black hover:bg-teal-700 hover:text-black"
                       aria-label={`Edit entry #${row.serial_number}`}
                       onMouseEnter={() => setHovered(null)}
                       onClick={() => setEditingRow(row)}
                     >
-                      <Pencil className="h-4 w-4" />
+                      <Pencil className="h-4 w-4 stroke-black" strokeWidth={2.25} />
                     </Button>
                   </td>
                 </tr>
