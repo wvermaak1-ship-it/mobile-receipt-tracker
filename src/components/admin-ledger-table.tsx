@@ -1,18 +1,34 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Pencil } from "lucide-react";
 import { formatOMR, roundOMR } from "@/lib/format-omr";
+import { Button } from "@/components/ui/button";
+import { AdminLedgerEditDialog } from "@/components/admin-ledger-edit-dialog";
 import type { ExpenseWithProfile } from "@/types/database";
 
 interface LedgerRow extends ExpenseWithProfile {
   signedUrl?: string | null;
 }
 
-export function AdminLedgerTable({ rows }: { rows: LedgerRow[] }) {
+export function AdminLedgerTable({ rows: initialRows }: { rows: LedgerRow[] }) {
+  const [rows, setRows] = useState(initialRows);
   const [hovered, setHovered] = useState<LedgerRow | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [editingRow, setEditingRow] = useState<LedgerRow | null>(null);
+
+  useEffect(() => {
+    setRows(initialRows);
+  }, [initialRows]);
+
   const grandTotal = roundOMR(rows.reduce((s, r) => s + Number(r.amount), 0));
   let running = 0;
+
+  function handleRowSaved(updated: LedgerRow) {
+    setRows((prev) =>
+      prev.map((r) => (r.id === updated.id ? { ...r, ...updated } : r))
+    );
+  }
 
   return (
     <div className="relative">
@@ -26,6 +42,12 @@ export function AdminLedgerTable({ rows }: { rows: LedgerRow[] }) {
               <th className="px-4 py-3 font-medium text-right">Amount (OMR)</th>
               <th className="px-4 py-3 font-medium text-right">Running Total</th>
               <th className="px-4 py-3 font-medium">Receipt</th>
+              <th className="px-4 py-3 font-medium">
+                <span className="inline-flex items-center gap-1.5">
+                  <Pencil className="h-3.5 w-3.5 text-slate-600" aria-hidden="true" />
+                  Edit Entry
+                </span>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -54,6 +76,18 @@ export function AdminLedgerTable({ rows }: { rows: LedgerRow[] }) {
                       <span className="text-amber-700 text-xs">Missing</span>
                     )}
                   </td>
+                  <td className="px-4 py-3">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-8 w-8 min-h-0 bg-transparent border-slate-300 text-slate-800 hover:bg-slate-50 hover:border-slate-400 hover:text-slate-900"
+                      aria-label={`Edit entry #${row.serial_number}`}
+                      onMouseEnter={() => setHovered(null)}
+                      onClick={() => setEditingRow(row)}
+                    >
+                      <Pencil className="h-4 w-4 text-slate-800" strokeWidth={2.25} />
+                    </Button>
+                  </td>
                 </tr>
               );
             })}
@@ -62,11 +96,18 @@ export function AdminLedgerTable({ rows }: { rows: LedgerRow[] }) {
             <tr>
               <td colSpan={3} className="px-4 py-3">Total (OMR)</td>
               <td className="px-4 py-3 text-right">{formatOMR(grandTotal)}</td>
-              <td colSpan={2} />
+              <td colSpan={3} />
             </tr>
           </tfoot>
         </table>
       </div>
+
+      <AdminLedgerEditDialog
+        row={editingRow}
+        open={editingRow !== null}
+        onOpenChange={(open) => !open && setEditingRow(null)}
+        onSaved={handleRowSaved}
+      />
 
       {hovered && (
         <div
