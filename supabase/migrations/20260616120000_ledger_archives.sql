@@ -42,6 +42,7 @@ AS $$
 $$;
 
 REVOKE ALL ON FUNCTION public.reset_expense_serial_seq() FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.reset_expense_serial_seq() FROM anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.reset_expense_serial_seq() TO service_role;
 
 ALTER TABLE public.ledger_archives ENABLE ROW LEVEL SECURITY;
