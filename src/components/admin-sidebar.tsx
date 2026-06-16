@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, BookOpen, Users, UserCog, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, BookOpen, Users, UserCog, Settings, LogOut, Archive } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
 const links = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/ledger", label: "Master Ledger", icon: BookOpen },
+  { href: "/admin/archive", label: "Archive", icon: Archive },
   { href: "/admin/employees", label: "Employees", icon: Users },
   { href: "/admin/users", label: "User Management", icon: UserCog },
   { href: "/admin/settings", label: "Settings", icon: Settings },

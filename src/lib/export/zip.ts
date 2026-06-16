@@ -7,7 +7,10 @@ function slugify(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
 
-export async function buildReceiptsZip(rows: LedgerExportRow[]): Promise<Buffer> {
+export async function buildReceiptsZip(
+  rows: LedgerExportRow[],
+  bucket = "receipts"
+): Promise<Buffer> {
   const admin = createAdminClient();
   const archive = archiver("zip", { zlib: { level: 9 } });
   const stream = new PassThrough();
@@ -27,7 +30,7 @@ export async function buildReceiptsZip(rows: LedgerExportRow[]): Promise<Buffer>
   for (const row of rows) {
     if (!row.receipt_path) continue;
     const filename = `${row.serial_number}_${slugify(row.employee_name)}_${row.purchase_date}.jpg`;
-    const { data, error } = await admin.storage.from("receipts").download(row.receipt_path);
+    const { data, error } = await admin.storage.from(bucket).download(row.receipt_path);
     if (error || !data) continue;
     const buffer = Buffer.from(await data.arrayBuffer());
     archive.append(buffer, { name: filename });
