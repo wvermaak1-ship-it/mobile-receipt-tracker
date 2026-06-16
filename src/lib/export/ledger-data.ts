@@ -1,5 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
-import type { ExpenseWithProfile } from "@/types/database";
+import type { ArchivedExpense, ExpenseWithProfile } from "@/types/database";
 
 export interface LedgerExportRow extends ExpenseWithProfile {
   employee_name: string;
@@ -26,5 +26,32 @@ export async function fetchLedgerForExport(filters?: {
   return ((data ?? []) as ExpenseWithProfile[]).map((row) => ({
     ...row,
     employee_name: row.profiles?.full_name ?? row.purchaser_name,
+  }));
+}
+
+export async function fetchArchivedLedgerForExport(archiveId: string): Promise<LedgerExportRow[]> {
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("archived_expenses")
+    .select("*")
+    .eq("archive_id", archiveId)
+    .order("serial_number", { ascending: true });
+
+  if (error) throw new Error(error.message);
+
+  return ((data ?? []) as ArchivedExpense[]).map((row) => ({
+    id: row.id,
+    serial_number: row.serial_number,
+    user_id: row.user_id,
+    purchaser_name: row.purchaser_name,
+    purchase_date: row.purchase_date,
+    amount: row.amount,
+    currency: row.currency,
+    receipt_path: row.receipt_path,
+    no_receipt_reason: row.no_receipt_reason,
+    created_at: row.created_at,
+    updated_at: row.updated_at,
+    profiles: { full_name: row.employee_name },
+    employee_name: row.employee_name,
   }));
 }

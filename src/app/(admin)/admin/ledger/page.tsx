@@ -25,7 +25,9 @@ export default async function AdminLedgerPage() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Master Ledger</h1>
-          <p className="text-slate-500 text-sm">Sequential record of all expenses · hover for receipt preview</p>
+          <p className="text-slate-500 text-sm">
+            Sequential record of all expenses · hover for receipt preview · edit entries to correct mistakes
+          </p>
         </div>
         <ExportToolbar />
       </div>

@@ -48,3 +48,29 @@ export interface ExpenseFormData {
   no_receipt_reason: string;
   has_receipt: boolean;
 }
+
+export interface LedgerArchive {
+  id: string;
+  name: string;
+  archived_at: string;
+  archived_by: string;
+  expense_count: number;
+  total_amount: number;
+}
+
+export interface ArchivedExpense {
+  id: string;
+  archive_id: string;
+  original_expense_id: string;
+  serial_number: number;
+  user_id: string;
+  employee_name: string;
+  purchaser_name: string;
+  purchase_date: string;
+  amount: number;
+  currency: string;
+  receipt_path: string | null;
+  no_receipt_reason: string | null;
+  created_at: string;
+  updated_at: string;
+}

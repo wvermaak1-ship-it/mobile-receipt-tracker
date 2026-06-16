@@ -4,17 +4,18 @@ import { useState } from "react";
 import { Download, FileSpreadsheet, FileText, Archive } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export function ExportToolbar({ employeeId }: { employeeId?: string }) {
+export function ExportToolbar({ employeeId, archiveId }: { employeeId?: string; archiveId?: string }) {
   const [loading, setLoading] = useState<string | null>(null);
 
   async function download(type: "xlsx" | "pdf" | "zip") {
     setLoading(type);
     const params = new URLSearchParams();
     if (employeeId) params.set("employee", employeeId);
+    const base = archiveId ? `/api/admin/archive/${archiveId}/export` : "/api/admin/export";
     const paths = {
-      xlsx: `/api/admin/export/ledger.xlsx?${params}`,
-      pdf: `/api/admin/export/ledger.pdf?${params}`,
-      zip: `/api/admin/export/receipts.zip?${params}`,
+      xlsx: `${base}/ledger.xlsx?${params}`,
+      pdf: `${base}/ledger.pdf?${params}`,
+      zip: `${archiveId ? `${base}/receipts.zip?${params}` : `/api/admin/export/receipts.zip?${params}`}`,
     };
     try {
       const res = await fetch(paths[type]);
@@ -24,7 +25,8 @@ export function ExportToolbar({ employeeId }: { employeeId?: string }) {
       const a = document.createElement("a");
       a.href = url;
       const ext = type === "xlsx" ? "xlsx" : type === "pdf" ? "pdf" : "zip";
-      a.download = `master-ledger-${new Date().toISOString().split("T")[0]}.${ext}`;
+      const prefix = archiveId ? "archived-ledger" : "master-ledger";
+      a.download = `${prefix}-${new Date().toISOString().split("T")[0]}.${ext}`;
       a.click();
       URL.revokeObjectURL(url);
     } catch {
